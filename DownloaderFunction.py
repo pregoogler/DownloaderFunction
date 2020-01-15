@@ -17,6 +17,8 @@ from urllib.parse import urlparse
 from zipfile import ZipFile
 
 
+baseURL = ""
+
 class HostHeaderSSLAdapter(adapters.HTTPAdapter):
     
     def resolve(self, hostname):
@@ -24,7 +26,7 @@ class HostHeaderSSLAdapter(adapters.HTTPAdapter):
             '1.1.1.1',
             '1.0.0.1',
         ]
-        resolutions = {'hiyobi.me': choice(dnsList)}
+        resolutions = {baseURL: choice(dnsList)}
         return resolutions.get(hostname)
 
 
@@ -54,12 +56,9 @@ s = Session()
 
 s.mount('https://', HostHeaderSSLAdapter())
 
-
-baseURL = "https://hiyobi.me"
-
 hParser = 'html.parser'
 
-infoBanner = "[Hiyobi-Downloader]"
+infoBanner = ""
 
 header = {
     'User-agent' : 'Mozilla/5.0',
@@ -138,6 +137,7 @@ def MakePDF(ImageList, Filename, DirLoc):
     rmtree(DirLoc, ignore_errors=True)
 
 
+
 def MakeZIP(directory, ZipName):
     JPGPath = []
     for root, directories, files in walk(directory):
@@ -162,7 +162,10 @@ def GetSoup(url):
             else:
                 return BeautifulSoup(html, hParser)
 
-        except (exceptions.ChunkedEncodingError, exceptions.SSLError, exceptions.Timeout, exceptions.ConnectionError):
+        except (exceptions.ChunkedEncodingError,
+                exceptions.SSLError, 
+                exceptions.Timeout, 
+                exceptions.ConnectionError):
             pass
     
 
@@ -191,7 +194,7 @@ def MakeDirectory(DirPath):
     finally:
         chdir(DirPath)
         
-        
+
 
 if __name__ == "__main__":
     freeze_support()
